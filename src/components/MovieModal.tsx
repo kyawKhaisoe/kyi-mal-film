@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IMAGE_BASE_URL, API_KEY, BASE_URL } from "@/constants/tmdb";
 import { Movie, MovieDetails } from "@/types/movie";
 import { X, Play, AlertCircle, Volume2, VolumeX } from "lucide-react";
@@ -17,6 +17,16 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
     const [movieDetails, setMovieDetails] = useState<MovieDetails | null>(null);
     const [isMuted, setIsMuted] = useState(true);
     const [isVideoReady, setIsVideoReady] = useState(false);
+    const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+    const sendYouTubeCommand = (func: "mute" | "unMute") => {
+        const win = iframeRef.current?.contentWindow;
+        if (!win) return;
+        win.postMessage(
+            JSON.stringify({ event: "command", func, args: [] }),
+            "*"
+        );
+    };
 
     useEffect(() => {
         if (!movie) {
@@ -94,7 +104,8 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
                             <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
                                 <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] pointer-events-none">
                                     <iframe
-                                        src={`https://www.youtube.com/embed/${trailerUrl}?autoplay=1&mute=${isMuted ? '1' : '0'}&controls=0&modestbranding=1`}
+                                        ref={iframeRef}
+                                        src={`https://www.youtube-nocookie.com/embed/${trailerUrl}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&enablejsapi=1`}
                                         title="Trailer"
                                         className="w-full h-full border-0 pointer-events-none"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -147,7 +158,13 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
                             <div className="mr-6 md:mr-10 flex space-x-4 pointer-events-auto">
                                 {trailerUrl && (
                                     <button
-                                        onClick={() => setIsMuted(prev => !prev)}
+                                        onClick={() => {
+                                            setIsMuted((prev) => {
+                                                const next = !prev;
+                                                sendYouTubeCommand(next ? "mute" : "unMute");
+                                                return next;
+                                            });
+                                        }}
                                         className="flex items-center justify-center p-3 border border-gray-400 rounded-full bg-[#181818]/80 text-[#00ADFF] hover:bg-[#00ADFF]/20 hover:border-[#00ADFF] transition cursor-pointer shadow-lg z-50 pointer-events-auto"
                                     >
                                         {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}

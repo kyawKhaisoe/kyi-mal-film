@@ -266,7 +266,7 @@ export default function MyList() {
                                                 const Player = ReactPlayer as any;
                                                 return (
                                                     <Player
-                                                        url={`https://www.youtube.com/watch?v=${trailerUrl}`}
+                                                        url={`https://www.youtube-nocookie.com/embed/${trailerUrl}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0`}
                                                         width="100%"
                                                         height="100%"
                                                         playing={isPlaying}

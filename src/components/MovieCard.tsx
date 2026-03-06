@@ -18,20 +18,6 @@ export default function MovieCard({ movie, onClick }: MovieCardProps) {
     const imagePath = movie.backdrop_path || movie.poster_path;
     const movieName = movie.title || movie.name || movie.original_name;
 
-    const [hasInteracted, setHasInteracted] = useState(false);
-
-    // Track user interaction for audio policy
-    useEffect(() => {
-        const handleInteraction = () => setHasInteracted(true);
-        window.addEventListener('click', handleInteraction);
-        window.addEventListener('keydown', handleInteraction);
-
-        return () => {
-            window.removeEventListener('click', handleInteraction);
-            window.removeEventListener('keydown', handleInteraction);
-        };
-    }, []);
-
     const handleMouseEnter = () => {
         setIsHovered(true);
     };
@@ -130,7 +116,7 @@ export default function MovieCard({ movie, onClick }: MovieCardProps) {
                 <div className={`absolute inset-0 w-full h-full pointer-events-none transition-all duration-[30000ms] ease-linear flex items-center justify-center ${isVideoLoaded ? 'opacity-100 scale-125 z-50' : 'opacity-0 scale-100 z-40'}`}>
                     <div className="absolute w-[180%] h-[180%] max-w-none">
                         <iframe
-                            src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=${hasInteracted ? '0' : '1'}&controls=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1`}
+                            src={`https://www.youtube-nocookie.com/embed/${videoKey}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1`}
                             title="Trailer"
                             className="w-full h-full border-0 pointer-events-none"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
