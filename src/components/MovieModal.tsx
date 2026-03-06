@@ -17,6 +17,7 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
     const [movieDetails, setMovieDetails] = useState<MovieDetails | null>(null);
     const [isMuted, setIsMuted] = useState(true);
     const [isVideoReady, setIsVideoReady] = useState(false);
+    const [origin, setOrigin] = useState<string | null>(null);
     const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
     const sendYouTubeCommand = (func: "mute" | "unMute") => {
@@ -27,6 +28,10 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
             "*"
         );
     };
+
+    useEffect(() => {
+        setOrigin(window.location.origin);
+    }, []);
 
     useEffect(() => {
         if (!movie) {
@@ -100,15 +105,15 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
                     className="relative bg-[#181818] border border-[#00ADFF]/30 w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] md:max-h-[85vh] scrollbar-hide"
                 >
                     <div className="relative pt-[56.25%] w-full bg-black shrink-0">
-                        {trailerUrl ? (
+                        {trailerUrl && origin ? (
                             <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
                                 <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] pointer-events-none">
                                     <iframe
                                         ref={iframeRef}
-                                        src={`https://www.youtube-nocookie.com/embed/${trailerUrl}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&enablejsapi=1`}
+                                        src={`https://www.youtube-nocookie.com/embed/${trailerUrl}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&origin=${origin}`}
                                         title="Trailer"
                                         className="w-full h-full border-0 pointer-events-none"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allow="autoplay; encrypted-media"
                                         onLoad={() => setTimeout(() => setIsVideoReady(true), 300)}
                                     />
                                 </div>
