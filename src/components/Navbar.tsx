@@ -13,6 +13,7 @@ const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [user, setUser] = useState<User | null>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const headerRef = useRef<HTMLElement | null>(null);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -33,12 +34,28 @@ const Navbar = () => {
             }
         };
 
-        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+    useEffect(() => {
+        const updateNavbarHeight = () => {
+            const height = headerRef.current?.offsetHeight;
+            if (!height) return;
+            document.documentElement.style.setProperty("--navbar-height", `${height}px`);
+        };
+
+        updateNavbarHeight();
+        window.addEventListener("resize", updateNavbarHeight, { passive: true });
+
+        return () => {
+            window.removeEventListener("resize", updateNavbarHeight);
+        };
+    }, [user]);
 
     // Listen to Supabase Auth State
     useEffect(() => {
@@ -101,7 +118,8 @@ const Navbar = () => {
 
     return (
         <header
-            className={`fixed top-0 w-full z-50 transition-colors duration-300 flex items-center p-4 md:px-12 md:py-6 ${isScrolled ? "bg-[#000000cc] backdrop-blur-md" : "bg-transparent"
+            ref={headerRef}
+            className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out flex items-center p-4 md:px-12 md:py-6 ${isScrolled ? "bg-black/70 backdrop-blur-md shadow-lg shadow-black/20" : "bg-transparent"
                 }`}
         >
             <div className="flex items-center space-x-2 md:space-x-10 flex-grow">
