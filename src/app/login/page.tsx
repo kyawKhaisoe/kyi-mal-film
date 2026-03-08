@@ -38,6 +38,7 @@ export default function Login() {
             }
         } catch (err: any) {
             setError(err.message);
+            alert(`Login failed: ${err.message}`);
         } finally {
             setLoading(false);
         }
