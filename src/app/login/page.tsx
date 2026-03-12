@@ -28,7 +28,7 @@ export default function Login() {
                 });
                 if (error) throw error;
                 setUser(data.user); // Update global state immediately
-                router.push("/"); // Smooth redirect without reload
+                router.replace("/"); // Smooth redirect without reload swapping the history
             } else {
                 const { error } = await supabase.auth.signUp({
                     email,
