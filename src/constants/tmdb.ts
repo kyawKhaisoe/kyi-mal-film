@@ -19,4 +19,6 @@ export const requests = {
   fetchPopularMovies: `/movie/popular?api_key=${API_KEY}&language=en-US`,
   fetchUpcomingMovies: `/movie/upcoming?api_key=${API_KEY}&language=en-US`,
   fetchNowPlayingMovies: `/movie/now_playing?api_key=${API_KEY}&language=en-US`,
+  fetchKidsAnimation: `/discover/movie?api_key=${API_KEY}&language=en-US&with_genres=16,10751`,
+  fetchKidsFamilyTV: `/discover/tv?api_key=${API_KEY}&language=en-US&with_genres=10751,16`,
 };
