@@ -20,9 +20,9 @@ export default function AuthListener() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             setUser(session?.user ?? null);
-            // Refresh on significant events like login or logout securely
+            // Refresh on significant events like login or logout securely via hard reload to prevent browser cache bugs
             if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-                router.refresh();
+                window.location.reload();
             }
         });
 
