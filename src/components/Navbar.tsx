@@ -243,7 +243,7 @@ const Navbar = () => {
 
                 <Link href="/kids" className="hidden md:flex items-center space-x-2 cursor-pointer group">
                     <img
-                        src="https://api.dicebear.com/9.x/micah/svg?seed=Felix&backgroundColor=ffdfbf"
+                        src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Kids&backgroundColor=ffdfbf"
                         alt="Kids"
                         className="w-7 h-7 md:w-8 md:h-8 rounded-md object-contain border-2 border-transparent group-hover:border-orange-400 transition-all shadow-sm"
                     />
