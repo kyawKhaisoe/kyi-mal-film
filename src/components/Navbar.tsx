@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Search, Bell, X } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { useAuthStore } from "@/store/authStore";
 import { requests, BASE_URL, API_KEY, IMAGE_BASE_URL } from "@/constants/tmdb";
 import { Movie } from "@/types/movie";
 
@@ -46,7 +47,7 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [user, setUser] = useState<User | null>(null);
+    const { user, isLoading: authLoading } = useAuthStore(); // Use Zustand store for user
     const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -127,25 +128,6 @@ const Navbar = () => {
         };
     }, [user]);
 
-    // Listen to Supabase Auth State
-    useEffect(() => {
-        const getUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user ?? null);
-        };
-        getUser();
-
-        const { data: authListener } = supabase.auth.onAuthStateChange(
-            (event, session) => {
-                setUser(session?.user ?? null);
-            }
-        );
-
-        return () => {
-            authListener.subscription.unsubscribe();
-        };
-    }, []);
-
     // Debounced search effect
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -182,7 +164,6 @@ const Navbar = () => {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        window.location.href = "/";
     };
 
     return (

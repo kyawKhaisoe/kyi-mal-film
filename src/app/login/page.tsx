@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuthStore } from "@/store/authStore";
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
@@ -11,6 +13,7 @@ export default function Login() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { setUser } = useAuthStore();
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,26 +22,24 @@ export default function Login() {
 
         try {
             if (isLogin) {
-                const { error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
                 });
                 if (error) throw error;
-                router.push("/");
-                router.refresh();
+                setUser(data.user); // Update global state immediately
+                router.push("/"); // Smooth redirect without reload
             } else {
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
                 });
                 if (error) throw error;
-                // Automatically set them to login or show message
                 alert("Success! If email confirmation is required, you'll need to check your email. Otherwise, you can now sign in.");
-                setIsLogin(true); // Switch to login tab
+                setIsLogin(true);
             }
         } catch (err: any) {
             setError(err.message);
-            alert(`Login failed: ${err.message}`);
         } finally {
             setLoading(false);
         }
@@ -90,9 +91,16 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-4 mt-6 bg-[#00ADFF] hover:bg-[#008FCC] text-white font-semibold rounded transition-colors disabled:opacity-50"
+                        className="w-full py-4 mt-6 flex items-center justify-center bg-[#00ADFF] hover:bg-[#008FCC] text-white font-semibold rounded transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {loading ? "Please wait..." : (isLogin ? "Sign In" : "Sign Up")}
+                        {loading ? (
+                            <>
+                                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                Please wait...
+                            </>
+                        ) : (
+                            isLogin ? "Sign In" : "Sign Up"
+                        )}
                     </button>
                 </form>
 
