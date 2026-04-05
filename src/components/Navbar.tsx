@@ -4,9 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Search, Bell, X } from "lucide-react";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
-import { useAuthStore } from "@/store/authStore";
 import { requests, BASE_URL, API_KEY, IMAGE_BASE_URL } from "@/constants/tmdb";
 import { Movie } from "@/types/movie";
 
@@ -47,7 +44,6 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const { user, isLoading: authLoading } = useAuthStore(); // Use Zustand store for user
     const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +56,7 @@ const Navbar = () => {
         { name: "TV Shows", path: "/tv-shows" },
         { name: "Movies", path: "/movies" },
         { name: "New & Popular", path: "/new-popular" },
-        ...(user ? [{ name: "My List", path: "/my-list" }] : []),
+        { name: "My List", path: "/my-list" },
     ];
 
     useEffect(() => {
@@ -126,7 +122,7 @@ const Navbar = () => {
         return () => {
             window.removeEventListener("resize", updateNavbarHeight);
         };
-    }, [user]);
+    }, []);
 
     // Debounced search effect
     useEffect(() => {
@@ -160,11 +156,6 @@ const Navbar = () => {
     const clearAndCloseSearch = () => {
         setSearchQuery("");
         setIsSearchExpanded(false);
-    };
-
-    const handleSignOut = async () => {
-        await supabase.auth.signOut();
-        window.location.href = '/login';
     };
 
     return (
@@ -315,28 +306,6 @@ const Navbar = () => {
                         </div>
                     </div>
                 </div>
-                {user ? (
-                    <div className="relative group flex items-center">
-                        <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
-                            alt="User Profile"
-                            className="w-8 h-8 rounded cursor-pointer object-contain"
-                        />
-                        <div className="hidden group-hover:flex absolute top-full right-0 mt-2 bg-black/90 border border-zinc-800 rounded flex-col items-start min-w-[150px] shadow-lg shadow-black p-2">
-                            <span className="text-xs text-gray-400 px-3 py-2 w-full truncate border-b border-zinc-700/50 mb-1">{user.email}</span>
-                            <button
-                                onClick={handleSignOut}
-                                className="w-full text-left text-sm text-white px-3 py-2 hover:bg-zinc-800 hover:text-[#00ADFF] rounded transition-colors"
-                            >
-                                Sign out
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <Link href="/login" className="bg-[#00ADFF] hover:bg-[#008FCC] text-white px-4 py-1.5 rounded text-sm transition-colors cursor-pointer block">
-                        Sign In
-                    </Link>
-                )}
             </div>
         </header>
     );

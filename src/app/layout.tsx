@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import SupabaseProvider from "@/components/SupabaseProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,12 +28,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SupabaseProvider>
-          <Navbar />
-          <main style={{ paddingTop: "var(--navbar-height, 80px)" }}>
-            {children}
-          </main>
-        </SupabaseProvider>
+        <Navbar />
+        <main style={{ paddingTop: "var(--navbar-height, 80px)" }}>
+          {children}
+        </main>
       </body>
     </html>
   );
